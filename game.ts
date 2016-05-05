@@ -41,9 +41,34 @@ function gameLoop(ctx){
     //ctx.clearRect(0, 0, w, h);
 }
 
+function keyboardInput(event: KeyboardEvent){
+    //a
+    if(event.keyCode == 37 || event.keyCode == 65){
+        window.alert("left key is pressed");
+    }
+    //w
+    else if (event.keyCode == 38 || event.keyCode == 87){
+        window.alert("Up key is pressed");
+    }
+    //d
+    else if (event.keyCode == 39 || event.keyCode == 68){
+        window.alert("right key is pressed");
+    }
+    //s
+    else if(event.keyCode == 40 || event.keyCode == 83){
+        window.alert("down key is pressed");
+    }
+    //space
+    else if (event.keyCode == 32){
+        window.alert("space key is pressed")
+    }
+}
 
 window.onload = () => {
     var canvas = <HTMLCanvasElement>document.getElementById("canvas");
+
+    document.addEventListener('keydown', keyboardInput)
+
     var ctx = canvas.getContext("2d");
     gameLoop(ctx);
 }

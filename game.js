@@ -26,8 +26,27 @@ function gameLoop(ctx) {
     mario1.drawImage(ctx);
     //ctx.clearRect(0, 0, w, h);
 }
+function keyboardInput(event) {
+    //a
+    if (event.keyCode == 37 || event.keyCode == 65) {
+        window.alert("left key is pressed");
+    }
+    else if (event.keyCode == 38 || event.keyCode == 87) {
+        window.alert("Up key is pressed");
+    }
+    else if (event.keyCode == 39 || event.keyCode == 68) {
+        window.alert("right key is pressed");
+    }
+    else if (event.keyCode == 40 || event.keyCode == 83) {
+        window.alert("down key is pressed");
+    }
+    else if (event.keyCode == 32) {
+        window.alert("space key is pressed");
+    }
+}
 window.onload = function () {
     var canvas = document.getElementById("canvas");
+    document.addEventListener('keydown', keyboardInput);
     var ctx = canvas.getContext("2d");
     gameLoop(ctx);
 };
