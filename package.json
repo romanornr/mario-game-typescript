@@ -1,0 +1,12 @@
+{
+  "name": "mario-game-typescript",
+  "version": "1.0.0",
+  "description": "Mario game in typescript",
+  "main": "index.js",
+  "dependencies": {
+    "typescript": "^1.8.10"
+  },
+  "devDependencies": {},
+  "author": "",
+  "license": "ISC"
+}
