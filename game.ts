@@ -1,5 +1,8 @@
 var w = 720, h = 480;
 
+var canvas: HTMLCanvasElement;
+var ctx: CanvasRenderingContext2D; 
+
 interface Character{
     draw(): void;
     velocity: number;
@@ -17,7 +20,7 @@ class Mario {
         this.x = x;
         this.y = y;
     }
-    public drawImage = (ctx): void =>{
+    public drawImage = (): void =>{
         ctx.save();
         ctx.beginPath();
         ctx.drawImage(marioImage, this.x, this.y);
@@ -29,46 +32,46 @@ class Mario {
 var marioImage = new Image();
 marioImage.src = "graphics/mario/small/Standing-mario.gif";
 
-var mario1: Mario = new Mario(70, 45);
+var mario: Mario = new Mario(70, 45);
 
-function gameLoop(ctx){
+function gameLoop(){
     requestAnimationFrame(gameLoop);
+    ctx.clearRect(0, 0, w, h);
     ctx.fillStyle = "rgb(174,238,238)";
     ctx.fillRect(0, 0, w, h);
     ctx.fillStyle = "rgb(14,253,1)";
     var floor = ctx.fillRect(0, h - 45, w, 45);
-    mario1.drawImage(ctx);
-    //ctx.clearRect(0, 0, w, h);
+    mario.drawImage();
 }
 
 function keyboardInput(event: KeyboardEvent){
     //a
     if(event.keyCode == 37 || event.keyCode == 65){
-        window.alert("left key is pressed");
+        mario.x -= 10;
     }
     //w
     else if (event.keyCode == 38 || event.keyCode == 87){
-        window.alert("Up key is pressed");
+        mario.y -= 35;
     }
     //d
     else if (event.keyCode == 39 || event.keyCode == 68){
-        window.alert("right key is pressed");
+        mario.x += 10;
     }
     //s
     else if(event.keyCode == 40 || event.keyCode == 83){
-        window.alert("down key is pressed");
+        mario.y += 10;
     }
     //space
     else if (event.keyCode == 32){
-        window.alert("space key is pressed")
+        
     }
 }
 
 window.onload = () => {
-    var canvas = <HTMLCanvasElement>document.getElementById("canvas");
+    canvas = <HTMLCanvasElement>document.getElementById('canvas');
 
     document.addEventListener('keydown', keyboardInput)
 
-    var ctx = canvas.getContext("2d");
-    gameLoop(ctx);
+    ctx = canvas.getContext("2d");
+    gameLoop();
 }
