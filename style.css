@@ -1,0 +1,7 @@
+#mario {
+	background: url('graphics/mario/small/Standing-mario.gif');
+}
+
+#marioRunning {
+	background: url('graphics/mario/small/Running-mario.gif');
+}

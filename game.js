@@ -1,15 +1,23 @@
 var w = 720, h = 480;
 var canvas;
 var ctx;
+var downForce = 2;
+var gravitySpeed = 1.3;
 var Mario = (function () {
     function Mario(x, y) {
         var _this = this;
-        this.downForce = 3;
+        if (x === void 0) { x = 70; }
+        if (y === void 0) { y = 45; }
         this.drawImage = function () {
             ctx.save();
             ctx.beginPath();
             ctx.drawImage(marioImage, _this.x, _this.y);
             ctx.restore;
+        };
+        this.gravity = function () {
+            mario.y += downForce;
+            if (mario.y >= 415)
+                mario.y = 415;
         };
         this.x = x;
         this.y = y;
@@ -18,7 +26,7 @@ var Mario = (function () {
 }());
 var marioImage = new Image();
 marioImage.src = "graphics/mario/small/Standing-mario.gif";
-var mario = new Mario(70, 45);
+var mario = new Mario(this.x, this.y);
 function gameLoop() {
     requestAnimationFrame(gameLoop);
     ctx.clearRect(0, 0, w, h);
@@ -27,6 +35,7 @@ function gameLoop() {
     ctx.fillStyle = "rgb(14,253,1)";
     var floor = ctx.fillRect(0, h - 45, w, 45);
     mario.drawImage();
+    mario.gravity();
 }
 function keyboardInput(event) {
     //a
@@ -34,7 +43,7 @@ function keyboardInput(event) {
         mario.x -= 10;
     }
     else if (event.keyCode == 38 || event.keyCode == 87) {
-        mario.y -= 35;
+        mario.y -= 30;
     }
     else if (event.keyCode == 39 || event.keyCode == 68) {
         mario.x += 10;
