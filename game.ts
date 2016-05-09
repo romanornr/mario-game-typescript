@@ -5,59 +5,89 @@ var ctx: CanvasRenderingContext2D;
 var downForce = 2;
 var gravitySpeed = 1.3;
 
-interface cObjects {
-    update();
-    collision();
-}
+// dit kan weg
+// abstract class cObjects{   
+//     constructor(protected position: Vector, protected _sprite:Sprite) { };
+//     update(){};
+//     collision() { };
 
+//     sprite(): Sprite { return this._sprite };
 
-abstract class cObjects implements cObjects{   
-    constructor(protected position: Vector) { };
-    update(){};
-    collision(){};
+// }
 
-}
+// class Vector { //deze class weg en behavoir in Character class
+//     constructor(private _x: number, private _y: number) { };
 
-class Vector {
-    constructor(private _x: number, private _y: number) { };
-    addVector(vector: Vector){
-        this._x = vector._x;
-        this._y = vector._y;
+//     x(): number { return this._x };
+//     y(): number { return this._y };
 
+//     setVector(vector: Vector){
+//         this._x += vector.x();
+//         this._y += vector.y();
+
+//     }
+
+// }
+
+// Initialiseer 
+class GameWorld {
+    screenwith: number;
+    sceenheight: number;
+
+    setScreen() {
+        this.screenwith = 720;
+        this.sceenheight = 480;
     }
 
-    x(): number { return this._x };
-    y(): number { return this._y };
+    // stel gameworld hoogte en breedte in
+
+    // method om floor hoogte te bepalen etc    
 
 }
 
-class Mario implements Character{
-    public x: number;
-    public y: number;
-  
-    constructor(x: number = 70, y: number = 45) {
-        this.x = x;
-        this.y = y;
+class GameItem {
+
+    // plaats items zoals pipes/obstacles
+
+    // set gameitem image
+    // set height
+    // gameitem position etc
+
+
+}
+
+class Character {
+
+    protected y_: number;
+    protected x_: number;
+
+    constructor(protected _x: number, protected _y: number) {
+        this._x = _x;
+        this._y = _y;
+    };
+
+    sprite: string;
+
+    setSpriteUrl(input: string) : void {
+        this.sprite = input; 
     }
-    public drawImage = (): void =>{
+
+    drawSprite() : void {
         ctx.save();
         ctx.beginPath();
-        ctx.drawImage(marioImage, this.x, this.y);
+        var img = new Image();
+        img.src = this.sprite;
+        ctx.drawImage(img, this._x, this._y)
         ctx.restore;
     }
-
-    public gravity = (): void => {
-        mario.y += downForce;
-            if (mario.y >= 415)
-                mario.y = 415;
-     };
-
+   
 }
 
-var marioImage = new Image();
-marioImage.src = "graphics/mario/small/Standing-mario.gif";
 
-var mario: Mario = new Mario(this.x, this.y);
+var mario = new Character(40, 50);
+mario.setSpriteUrl("graphics/mario/small/Standing-mario.gif");
+
+
 
 function gameLoop(){
     requestAnimationFrame(gameLoop);
@@ -66,38 +96,38 @@ function gameLoop(){
     ctx.fillRect(0, 0, w, h);
     ctx.fillStyle = "rgb(14,253,1)";
     var floor = ctx.fillRect(0, h - 45, w, 45);
-    mario.drawImage();
-    mario.gravity();
+    mario.drawSprite();
+    //mario.gravity();
 
 }
 
-function keyboardInput(event: KeyboardEvent){
-    //a
-    if(event.keyCode == 37 || event.keyCode == 65){
-        mario.x -= 10;
-    }
-    //w
-    else if (event.keyCode == 38 || event.keyCode == 87){
-        mario.y -= 30;
-    }
-    //d
-    else if (event.keyCode == 39 || event.keyCode == 68){
-        mario.x += 10;
-    }
-    //s
-    else if(event.keyCode == 40 || event.keyCode == 83){
-        mario.y += 10;
-    }
-    //space
-    else if (event.keyCode == 32){
+// function keyboardInput(event: KeyboardEvent){
+//     //a
+//     if(event.keyCode == 37 || event.keyCode == 65){
+//         mario.x -= 10;
+//     }
+//     //w
+//     else if (event.keyCode == 38 || event.keyCode == 87){
+//         mario.y -= 30;
+//     }
+//     //d
+//     else if (event.keyCode == 39 || event.keyCode == 68){
+//         mario.x += 10;
+//     }
+//     //s
+//     else if(event.keyCode == 40 || event.keyCode == 83){
+//         mario.y += 10;
+//     }
+//     //space
+//     else if (event.keyCode == 32){
         
-    }
-}
+//     }
+// }
 
 window.onload = () => {
     canvas = <HTMLCanvasElement>document.getElementById('canvas');
 
-    document.addEventListener('keydown', keyboardInput)
+    // document.addEventListener('keydown', keyboardInput)
 
     ctx = canvas.getContext("2d");
     gameLoop();

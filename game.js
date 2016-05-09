@@ -3,57 +3,60 @@ var canvas;
 var ctx;
 var downForce = 2;
 var gravitySpeed = 1.3;
-var cObjects = (function () {
-    function cObjects(position) {
-        this.position = position;
+// dit kan weg
+// abstract class cObjects{   
+//     constructor(protected position: Vector, protected _sprite:Sprite) { };
+//     update(){};
+//     collision() { };
+//     sprite(): Sprite { return this._sprite };
+// }
+// class Vector { //deze class weg en behavoir in Character class
+//     constructor(private _x: number, private _y: number) { };
+//     x(): number { return this._x };
+//     y(): number { return this._y };
+//     setVector(vector: Vector){
+//         this._x += vector.x();
+//         this._y += vector.y();
+//     }
+// }
+// Initialiseer 
+var GameWorld = (function () {
+    function GameWorld() {
     }
-    ;
-    cObjects.prototype.update = function () { };
-    ;
-    cObjects.prototype.collision = function () { };
-    ;
-    return cObjects;
+    GameWorld.prototype.setScreen = function () {
+        this.screenwith = 720;
+        this.sceenheight = 480;
+    };
+    return GameWorld;
 }());
-var Vector = (function () {
-    function Vector(_x, _y) {
+var GameItem = (function () {
+    function GameItem() {
+    }
+    return GameItem;
+}());
+var Character = (function () {
+    function Character(_x, _y) {
+        this._x = _x;
+        this._y = _y;
         this._x = _x;
         this._y = _y;
     }
     ;
-    Vector.prototype.addVector = function (vector) {
-        this._x = vector._x;
-        this._y = vector._y;
+    Character.prototype.setSpriteUrl = function (input) {
+        this.sprite = input;
     };
-    Vector.prototype.x = function () { return this._x; };
-    ;
-    Vector.prototype.y = function () { return this._y; };
-    ;
-    return Vector;
+    Character.prototype.drawSprite = function () {
+        ctx.save();
+        ctx.beginPath();
+        var img = new Image();
+        img.src = this.sprite;
+        ctx.drawImage(img, this._x, this._y);
+        ctx.restore;
+    };
+    return Character;
 }());
-var Mario = (function () {
-    function Mario(x, y) {
-        var _this = this;
-        if (x === void 0) { x = 70; }
-        if (y === void 0) { y = 45; }
-        this.drawImage = function () {
-            ctx.save();
-            ctx.beginPath();
-            ctx.drawImage(marioImage, _this.x, _this.y);
-            ctx.restore;
-        };
-        this.gravity = function () {
-            mario.y += downForce;
-            if (mario.y >= 415)
-                mario.y = 415;
-        };
-        this.x = x;
-        this.y = y;
-    }
-    return Mario;
-}());
-var marioImage = new Image();
-marioImage.src = "graphics/mario/small/Standing-mario.gif";
-var mario = new Mario(this.x, this.y);
+var mario = new Character(40, 50);
+mario.setSpriteUrl("graphics/mario/small/Standing-mario.gif");
 function gameLoop() {
     requestAnimationFrame(gameLoop);
     ctx.clearRect(0, 0, w, h);
@@ -61,29 +64,33 @@ function gameLoop() {
     ctx.fillRect(0, 0, w, h);
     ctx.fillStyle = "rgb(14,253,1)";
     var floor = ctx.fillRect(0, h - 45, w, 45);
-    mario.drawImage();
-    mario.gravity();
+    mario.drawSprite();
+    //mario.gravity();
 }
-function keyboardInput(event) {
-    //a
-    if (event.keyCode == 37 || event.keyCode == 65) {
-        mario.x -= 10;
-    }
-    else if (event.keyCode == 38 || event.keyCode == 87) {
-        mario.y -= 30;
-    }
-    else if (event.keyCode == 39 || event.keyCode == 68) {
-        mario.x += 10;
-    }
-    else if (event.keyCode == 40 || event.keyCode == 83) {
-        mario.y += 10;
-    }
-    else if (event.keyCode == 32) {
-    }
-}
+// function keyboardInput(event: KeyboardEvent){
+//     //a
+//     if(event.keyCode == 37 || event.keyCode == 65){
+//         mario.x -= 10;
+//     }
+//     //w
+//     else if (event.keyCode == 38 || event.keyCode == 87){
+//         mario.y -= 30;
+//     }
+//     //d
+//     else if (event.keyCode == 39 || event.keyCode == 68){
+//         mario.x += 10;
+//     }
+//     //s
+//     else if(event.keyCode == 40 || event.keyCode == 83){
+//         mario.y += 10;
+//     }
+//     //space
+//     else if (event.keyCode == 32){
+//     }
+// }
 window.onload = function () {
     canvas = document.getElementById('canvas');
-    document.addEventListener('keydown', keyboardInput);
+    // document.addEventListener('keydown', keyboardInput)
     ctx = canvas.getContext("2d");
     gameLoop();
 };
