@@ -5,9 +5,30 @@ var ctx: CanvasRenderingContext2D;
 var downForce = 2;
 var gravitySpeed = 1.3;
 
-interface Character{
-    x: number;
-    y: number;
+interface cObjects {
+    update();
+    collision();
+}
+
+
+abstract class cObjects implements cObjects{   
+    constructor(protected position: Vector) { };
+    update(){};
+    collision(){};
+
+}
+
+class Vector {
+    constructor(private _x: number, private _y: number) { };
+    addVector(vector: Vector){
+        this._x = vector._x;
+        this._y = vector._y;
+
+    }
+
+    x(): number { return this._x };
+    y(): number { return this._y };
+
 }
 
 class Mario implements Character{

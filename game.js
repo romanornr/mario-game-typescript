@@ -3,6 +3,33 @@ var canvas;
 var ctx;
 var downForce = 2;
 var gravitySpeed = 1.3;
+var cObjects = (function () {
+    function cObjects(position) {
+        this.position = position;
+    }
+    ;
+    cObjects.prototype.update = function () { };
+    ;
+    cObjects.prototype.collision = function () { };
+    ;
+    return cObjects;
+}());
+var Vector = (function () {
+    function Vector(_x, _y) {
+        this._x = _x;
+        this._y = _y;
+    }
+    ;
+    Vector.prototype.addVector = function (vector) {
+        this._x = vector._x;
+        this._y = vector._y;
+    };
+    Vector.prototype.x = function () { return this._x; };
+    ;
+    Vector.prototype.y = function () { return this._y; };
+    ;
+    return Vector;
+}());
 var Mario = (function () {
     function Mario(x, y) {
         var _this = this;
@@ -60,3 +87,4 @@ window.onload = function () {
     ctx = canvas.getContext("2d");
     gameLoop();
 };
+//# sourceMappingURL=game.js.map
