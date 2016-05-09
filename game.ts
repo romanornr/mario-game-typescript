@@ -66,18 +66,17 @@ class Character {
         this._y = _y;
     };
 
-    sprite: string;
+    sprite: HTMLImageElement;
 
     setSpriteUrl(input: string) : void {
-        this.sprite = input; 
+        this.sprite = new Image();
+        this.sprite.src = input;
     }
 
     drawSprite() : void {
         ctx.save();
         ctx.beginPath();
-        var img = new Image();
-        img.src = this.sprite;
-        ctx.drawImage(img, this._x, this._y)
+        ctx.drawImage(this.sprite, this._x, this._y)
         ctx.restore;
     }
    
