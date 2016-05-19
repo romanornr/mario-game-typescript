@@ -52,18 +52,15 @@ class GameItem {
 
 }
 
+
 class Character {
 
-    public y_: number;
-    public x_: number;
-    public nFrames: number = 30;
+    frameWidth: number = 15;
+    frameHeight: number = 20;
 
-    constructor(public _x: number, public _y: number, public frameSize: number = 200, public index: number = 0, nFrames: number = 30) {
+    constructor(public _x: number, public _y: number) {
         this._x = _x;
         this._y = _y;
-        this.frameSize = frameSize;
-        this.nFrames = nFrames;
-        this.index = index;
     };
 
     sprite: HTMLImageElement;
@@ -81,37 +78,27 @@ class Character {
     }
 
 
-    drawSprite(): void {
-        ctx.save();
-        ctx.beginPath();
-        ctx.drawImage(this.sprite, this._x, this._y)
-        ctx.restore;
+    drawSprite(frameIndex: number): void {
+            ctx.drawImage(this.sprite,
+                frameIndex * this.frameWidth, 0,   // Start of slice
+                this.frameWidth, this.frameHeight, // Size of slice
+                this._x, this._y, 15, 20);        
     }
 
     animateSprite(): void {
-        ctx.save();
-        ctx.beginPath();
-        ctx.drawImage(this.sprite, this._x, this._y, 30, 30,0,0,20,20)
-        ctx.restore;
-
-        // this._x += this.frameSize;
-        // this.index += 1;
-
-        // if(this.index >= this.nFrames){
-        //     this._x = 0;
-        //     this._y = 0;
-        //     this.index = 0;
-        // }
+        // ctx.save();
+        // ctx.beginPath();
+        // ctx.restore;
         
     }
    
 }
 
-
 var mario = new Character(40, 50);
 
+
 // setup screen elements here
-mario.setSpriteUrl("graphics/mario/small/Standing-mario.gif");
+mario.setSpriteUrl("graphics/mario/small/Running-mario.gif");
 
 function gameLoop(){
 
@@ -124,8 +111,8 @@ function gameLoop(){
     ctx.fillRect(0, 0, w, h);
     ctx.fillStyle = "rgb(14,253,1)";
     var floor = ctx.fillRect(0, h - 45, w, 45);
-    mario.drawSprite();
-    //mario.animateSprite();
+    mario.drawSprite(2);
+    mario.animateSprite();
     mario.addGravity();
 
 }
@@ -135,16 +122,18 @@ function keyboardInput(event: KeyboardEvent) {
     switch (event.keyCode) {
         case 65: case 37: //a
             mario.setSpriteUrl("graphics/mario/small/Running-mario.gif");
-            mario.animateSprite();
+            //mario.animateSprite();
             mario._x -= 10;
             break;
 
         case 38: case 87: //w
-            mario._y -= 30;
+            mario.setSpriteUrl("graphics/mario/small/Running-mario.gif");
+            //mario.animateSprite()
+                    mario._y -= 30;
             break;
         case 39: case 68: //d
             mario.setSpriteUrl("graphics/mario/small/Running-mario.gif");
-            mario.animateSprite()
+            //mario.animateSprite()
             mario._x += 10;
             break;
         case 40: case 83: //s
@@ -155,7 +144,7 @@ function keyboardInput(event: KeyboardEvent) {
             break;
         default:
             mario.setSpriteUrl("graphics/mario/small/Standing-mario.gif");
-            mario.drawSprite();
+            //mario.drawSprite();
             break;      
     }
 
