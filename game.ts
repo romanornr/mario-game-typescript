@@ -57,10 +57,11 @@ class Character {
 
     frameWidth: number;
     frameHeight: number; 
-    currentFrame: number;
-    counter: number;
+    tickCount: number;
+    ticksPerFrame: number = 1;
+    frameIndex: number;
 
-    constructor(public _x: number, public _y: number) {
+    constructor(public _x: number, public _y: number, public numberOfFrames : number) {
         this._x = _x;
         this._y = _y;
     };
@@ -80,44 +81,35 @@ class Character {
             this._y = 415;
     }
 
-    // update() : void {
+    drawSprite(): void {
 
-    //     if(this.counter == (frameSpeed - 1))
-    //         currentFrame = (c)
+        this.tickCount = this.ticksPerFrame;
 
-
-
-    // }
-
-    drawSprite(frameIndex: number): void {
+        if (this.tickCount >= this.ticksPerFrame) {
+            this.tickCount = 0;
+            if (this.frameIndex < this.numberOfFrames - 1) {
+                this.frameIndex += 1;
+            } else {
+                this.frameIndex = 0;
+            }
+        }
 
         this.frameHeight = this.sprite.height;
-        this.frameWidth = this.sprite.width / 4;
-
-        ctx.save();
-        ctx.beginPath();
+        this.frameWidth = this.sprite.width / this.numberOfFrames;
 
         ctx.drawImage(this.sprite,
-            frameIndex * this.frameWidth, 0,   // Start of slice
+            this.frameIndex * this.frameWidth, 0,   // Start of slice
             this.frameWidth, this.frameHeight, // Size of slice
-            this._x, this._y, 15, 20);   
-        ctx.restore();
-
+            this._x, this._y, 15, 20);
     }
-
-    animateSprite(): void {
-        // ctx.save();
-        // ctx.beginPath();
-        // ctx.restore;
-        
-    }
-   
 }
-var mario = new Character(40, 50);
+
+var mario = new Character(40, 50, 4);
 
 
 // setup screen elements here
 mario.setSpriteUrl("graphics/mario/small/Standing-mario.gif");
+mario.numberOfFrames = 1;
 
 function gameLoop(){
 
@@ -130,8 +122,8 @@ function gameLoop(){
     ctx.fillRect(0, 0, w, h);
     ctx.fillStyle = "rgb(14,253,1)";
     var floor = ctx.fillRect(0, h - 45, w, 45);
-    mario.drawSprite(0);
-    mario.animateSprite();
+    mario.drawSprite();
+    
     mario.addGravity();
 
 }
@@ -141,38 +133,50 @@ function keyboardInput(event: KeyboardEvent) {
     switch (event.keyCode) {
         case 65: case 37: //a
             mario.setSpriteUrl("graphics/mario/small/Running-mario.gif");
-            //mario.animateSprite();
+            mario.numberOfFrames = 4;
             mario._x -= 10;
             break;
 
         case 38: case 87: //w
-            mario.setSpriteUrl("graphics/mario/small/Running-mario.gif");
-            //mario.animateSprite()
+            mario.setSpriteUrl("graphics/mario/small/Jumping-mario.gif");
+            mario.numberOfFrames = 1;
             mario._y -= 30;
             break;
         case 39: case 68: //d
             mario.setSpriteUrl("graphics/mario/small/Running-mario.gif");
-            //mario.animateSprite()
+            mario.numberOfFrames = 4;
             mario._x += 10;
             break;
         case 40: case 83: //s
             mario._y += 20;
             break;
         case 32: //space
-
             break;
         default:
             mario.setSpriteUrl("graphics/mario/small/Standing-mario.gif");
-            mario.drawSprite(0);
+            mario.numberOfFrames = 1;
             break;      
     }
 
 }
 
+function keyboardInput_release(event: KeyboardEvent){
+    switch (event.keyCode) {
+        case 65: case 37: //a
+        case 38: case 87: //w
+        case 39: case 68: //d
+        case 40: case 83: //s
+            mario.setSpriteUrl("graphics/mario/small/Standing-mario.gif");
+            mario.numberOfFrames = 1;
+            break;
+    }
+}
+
 window.onload = () => {
     canvas = <HTMLCanvasElement>document.getElementById('canvas');
 
-    document.addEventListener('keydown', keyboardInput)
+    document.addEventListener('keydown', keyboardInput);
+    document.addEventListener('keyup', keyboardInput_release)
 
     ctx = canvas.getContext("2d");
     gameLoop();
