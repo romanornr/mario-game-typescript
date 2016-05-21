@@ -55,10 +55,13 @@ var Character = (function () {
     // }
     Character.prototype.drawSprite = function (frameIndex) {
         this.frameHeight = this.sprite.height;
-        this.frameWidth = this.sprite.width;
+        this.frameWidth = this.sprite.width / 4;
+        ctx.save();
+        ctx.beginPath();
         ctx.drawImage(this.sprite, frameIndex * this.frameWidth, 0, // Start of slice
         this.frameWidth, this.frameHeight, // Size of slice
         this._x, this._y, 15, 20);
+        ctx.restore();
     };
     Character.prototype.animateSprite = function () {
         // ctx.save();
