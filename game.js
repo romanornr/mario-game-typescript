@@ -36,8 +36,6 @@ var Character = (function () {
     function Character(_x, _y) {
         this._x = _x;
         this._y = _y;
-        this.frameWidth = 15;
-        this.frameHeight = 20;
         this._x = _x;
         this._y = _y;
     }
@@ -51,32 +49,27 @@ var Character = (function () {
         if (this._y >= 415)
             this._y = 415;
     };
+    // update() : void {
+    //     if(this.counter == (frameSpeed - 1))
+    //         currentFrame = (c)
+    // }
     Character.prototype.drawSprite = function (frameIndex) {
+        this.frameHeight = this.sprite.height;
+        this.frameWidth = this.sprite.width;
         ctx.drawImage(this.sprite, frameIndex * this.frameWidth, 0, // Start of slice
         this.frameWidth, this.frameHeight, // Size of slice
         this._x, this._y, 15, 20);
     };
     Character.prototype.animateSprite = function () {
-        ctx.save();
-        ctx.beginPath();
-        // hoe groot is 1 sprite of mario
-        //ctx.drawImage(this.sprite, 10, 30, 60, 20, this._x, this._y, 60, 20);
-        //ctx.drawImage(this.sprite, 300, 0, 90, 200, this._x, this._y, 50, 100);
-        //ctx.drawImage(this.sprite, 10, 0, 90, 200, this._x, this._y, 50, 100);
-        ctx.restore;
-        // this._x += this.frameSize;
-        // this.index += 1;
-        // if(this.index >= this.nFrames){
-        //     this._x = 0;
-        //     this._y = 0;
-        //     this.index = 0;
-        // }
+        // ctx.save();
+        // ctx.beginPath();
+        // ctx.restore;
     };
     return Character;
 }());
 var mario = new Character(40, 50);
 // setup screen elements here
-mario.setSpriteUrl("graphics/mario/small/Running-mario.gif");
+mario.setSpriteUrl("graphics/mario/small/Standing-mario.gif");
 function gameLoop() {
     //game behavior here
     requestAnimationFrame(gameLoop);
@@ -85,7 +78,7 @@ function gameLoop() {
     ctx.fillRect(0, 0, w, h);
     ctx.fillStyle = "rgb(14,253,1)";
     var floor = ctx.fillRect(0, h - 45, w, 45);
-    mario.drawSprite(2);
+    mario.drawSprite(0);
     mario.animateSprite();
     mario.addGravity();
 }
@@ -117,7 +110,7 @@ function keyboardInput(event) {
             break;
         default:
             mario.setSpriteUrl("graphics/mario/small/Standing-mario.gif");
-            //mario.drawSprite();
+            mario.drawSprite(0);
             break;
     }
 }
