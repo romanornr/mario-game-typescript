@@ -5,9 +5,17 @@ var ctx: CanvasRenderingContext2D;
 var downForce = 2;
 var gravitySpeed = 1.3;
 
-class GameWorld {
+class Game {
+
     screenwith: number;
     sceenheight: number;
+
+    controls = {
+        left: false,
+        up: false,
+        right: false,
+        down: false,
+    }
 
     setScreen() {
         this.screenwith = 720;
@@ -17,6 +25,21 @@ class GameWorld {
     // stel gameworld hoogte en breedte in
 
     // method om floor hoogte te bepalen etc    
+
+}
+
+class CameraView {
+
+    xView: number;
+    yView: number;
+
+    setCamera() {
+        this.xView = 0;
+        this.yView = 0;
+        // this.axis = AXIS.BOTH;
+        // this.viewportRect = new GameWorld(this.xView, this.yView, w, h);
+    }
+
 
 }
 
@@ -60,6 +83,7 @@ class Character {
     tickCount: number;
     ticksPerFrame: number = 1;
     frameIndex: number;
+    jump: boolean;
 
     constructor(public _x: number, public _y: number, public numberOfFrames : number) {
         this._x = _x;
@@ -74,7 +98,7 @@ class Character {
         this.sprite.src = input;
     }
 
-    addGravity() : void {
+    addGravity(): void {
 
         this._y += downForce;
         if (this._y >= 415)
@@ -123,7 +147,6 @@ function gameLoop(){
     ctx.fillStyle = "rgb(14,253,1)";
     var floor = ctx.fillRect(0, h - 45, w, 45);
     mario.drawSprite();
-    
     mario.addGravity();
 
 }
@@ -132,14 +155,17 @@ function keyboardInput(event: KeyboardEvent) {
 
     switch (event.keyCode) {
         case 65: case 37: //a
-            mario.setSpriteUrl("graphics/mario/small/Running-mario.gif");
+            mario.setSpriteUrl("graphics/mario/small/Running-mario-left.gif");
             mario.numberOfFrames = 4;
             mario._x -= 10;
             break;
 
         case 38: case 87: //w
-            mario.setSpriteUrl("graphics/mario/small/Jumping-mario.gif");
             mario.numberOfFrames = 1;
+            mario.setSpriteUrl("graphics/mario/small/Jumping-mario.gif");
+            if(mario._y < 415) {
+                return false;
+            }
             mario._y -= 30;
             break;
         case 39: case 68: //d
@@ -163,9 +189,16 @@ function keyboardInput(event: KeyboardEvent) {
 function keyboardInput_release(event: KeyboardEvent){
     switch (event.keyCode) {
         case 65: case 37: //a
+           // test.controls.left = true;
+            break;
         case 38: case 87: //w
+          // test.controls.up = true;
+            break;
         case 39: case 68: //d
+           // test.controls.right = true;
+            //console.log(test.controls.right);
         case 40: case 83: //s
+           // test.controls.down = true;
             mario.setSpriteUrl("graphics/mario/small/Standing-mario.gif");
             mario.numberOfFrames = 1;
             break;

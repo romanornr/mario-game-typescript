@@ -3,14 +3,31 @@ var canvas;
 var ctx;
 var downForce = 2;
 var gravitySpeed = 1.3;
-var GameWorld = (function () {
-    function GameWorld() {
+var Game = (function () {
+    function Game() {
+        this.controls = {
+            left: false,
+            up: false,
+            right: false,
+            down: false
+        };
     }
-    GameWorld.prototype.setScreen = function () {
+    Game.prototype.setScreen = function () {
         this.screenwith = 720;
         this.sceenheight = 480;
     };
-    return GameWorld;
+    return Game;
+}());
+var CameraView = (function () {
+    function CameraView() {
+    }
+    CameraView.prototype.setCamera = function () {
+        this.xView = 0;
+        this.yView = 0;
+        // this.axis = AXIS.BOTH;
+        // this.viewportRect = new GameWorld(this.xView, this.yView, w, h);
+    };
+    return CameraView;
 }());
 var GameItem = (function () {
     function GameItem() {
@@ -89,14 +106,17 @@ function keyboardInput(event) {
     switch (event.keyCode) {
         case 65:
         case 37:
-            mario.setSpriteUrl("graphics/mario/small/Running-mario.gif");
+            mario.setSpriteUrl("graphics/mario/small/Running-mario-left.gif");
             mario.numberOfFrames = 4;
             mario._x -= 10;
             break;
         case 38:
         case 87:
-            mario.setSpriteUrl("graphics/mario/small/Jumping-mario.gif");
             mario.numberOfFrames = 1;
+            mario.setSpriteUrl("graphics/mario/small/Jumping-mario.gif");
+            if (mario._y < 415) {
+                return false;
+            }
             mario._y -= 30;
             break;
         case 39:
@@ -120,13 +140,20 @@ function keyboardInput(event) {
 function keyboardInput_release(event) {
     switch (event.keyCode) {
         case 65:
-        case 37: //a
+        case 37:
+            // test.controls.left = true;
+            break;
         case 38:
-        case 87: //w
+        case 87:
+            // test.controls.up = true;
+            break;
         case 39:
         case 68: //d
+        // test.controls.right = true;
+        //console.log(test.controls.right);
         case 40:
         case 83:
+            // test.controls.down = true;
             mario.setSpriteUrl("graphics/mario/small/Standing-mario.gif");
             mario.numberOfFrames = 1;
             break;
