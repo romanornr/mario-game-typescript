@@ -45,17 +45,35 @@ class CameraView {
 
 class GameItem {
 
-    public height: number;
-    public width: number;
+    frameWidth: number;
+    frameHeight: number; 
 
-    public repeatHeight: boolean;
-    public repeatWidth: boolean;
+    constructor(public _x: number, public _y: number) {
+        this._x = _x;
+        this._y = _y;
+    };
 
     sprite: HTMLImageElement;
 
-    drawItem() : void {
-        ctx.save();
-        ctx.beginPath();
+
+    setSpriteUrl(input: string): void {
+        this.sprite = new Image();
+        this.sprite.src = input;
+    }
+
+    addGravity(): void {
+
+        this._y += downForce;
+        if (this._y >= 415)
+            this._y = 415;
+    }
+
+    drawSprite(): void {
+
+        this.frameHeight = this.sprite.height;
+        this.frameWidth = this.sprite.width;
+
+        ctx.drawImage(this.sprite, this._x, this._y);
         
         //loop die checkt of de repeatHeight of repeatWidth true of false is
         // loop die de width of height vult
@@ -130,15 +148,15 @@ class Character {
 
 var mario = new Character(40, 50, 4);
 
+var pipe = new GameItem(50, 415)
+pipe.setSpriteUrl("graphics/assorted/Pipe-head.gif");
+
 
 // setup screen elements here
 mario.setSpriteUrl("graphics/mario/small/Standing-mario.gif");
 mario.numberOfFrames = 1;
 
-function gameLoop(){
-
-    //game behavior here
-
+function gameLoop() {
 
     requestAnimationFrame(gameLoop);
     ctx.clearRect(0, 0, w, h);
@@ -147,7 +165,15 @@ function gameLoop(){
     ctx.fillStyle = "rgb(14,253,1)";
     var floor = ctx.fillRect(0, h - 45, w, 45);
     mario.drawSprite();
+    pipe.drawSprite();
     mario.addGravity();
+
+    if (mario._x < pipe._x + pipe.frameWidth &&
+        mario._x + mario.frameWidth > pipe._x &&
+        mario._y < pipe._y + pipe.frameHeight &&
+        mario.frameHeight + mario._y > pipe._y) {
+        console.log('collision detected');
+    }
 
 }
 
@@ -189,7 +215,8 @@ function keyboardInput(event: KeyboardEvent) {
 function keyboardInput_release(event: KeyboardEvent){
     switch (event.keyCode) {
         case 65: case 37: //a
-           // test.controls.left = true;
+            mario.setSpriteUrl("graphics/mario/small/Standing-mario-left.gif");
+            mario.numberOfFrames = 1;
             break;
         case 38: case 87: //w
           // test.controls.up = true;
