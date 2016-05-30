@@ -21,11 +21,6 @@ class Game {
         this.screenwith = 720;
         this.sceenheight = 480;
     }
-
-    // stel gameworld hoogte en breedte in
-
-    // method om floor hoogte te bepalen etc    
-
 }
 
 class CameraView {
@@ -36,8 +31,6 @@ class CameraView {
     setCamera() {
         this.xView = 0;
         this.yView = 0;
-        // this.axis = AXIS.BOTH;
-        // this.viewportRect = new GameWorld(this.xView, this.yView, w, h);
     }
 
 
@@ -72,21 +65,6 @@ class GameItem {
         this.frameWidth = this.sprite.width;
 
         ctx.drawImage(this.sprite, this.position.x, this.position.y);
-        
-        //loop die checkt of de repeatHeight of repeatWidth true of false is
-        // loop die de width of height vult
-        // dus eerst X as 
-
-        /*
-            if repeatWidth
-                for (int i = spritewidth; i <= repeatwidth; i += spritewidth)
-                    teken op x of y as
-
-
-
-        */
-
-
     }
 
 }
@@ -148,8 +126,6 @@ var mario = new Character(new Vector(40,50), 4);
 var pipe = new GameItem(new Vector(50, 415))
 pipe.setSpriteUrl("graphics/assorted/Pipe-head.gif");
 
-
-// setup screen elements here
 mario.setSpriteUrl("graphics/mario/small/Standing-mario.gif");
 mario.numberOfFrames = 1;
 
@@ -266,13 +242,9 @@ function keyboardInput_release(event: KeyboardEvent){
             mario.numberOfFrames = 1;
             break;
         case 38: case 87: //w
-          // test.controls.up = true;
             break;
         case 39: case 68: //d
-           // test.controls.right = true;
-            //console.log(test.controls.right);
         case 40: case 83: //s
-           // test.controls.down = true;
             mario.setSpriteUrl("graphics/mario/small/Standing-mario.gif");
             mario.numberOfFrames = 1;
             break;
