@@ -1,6 +1,8 @@
 {
 	"compilerOptions": {
-		"sourceMap": true
-	},
-	"files": ["game.ts"]
+		"sourceMap": true,
+		"removeComments": true,
+        "target": "es5",
+        "out": "game.js"
+    }
 }

@@ -48,10 +48,8 @@ class GameItem {
     frameWidth: number;
     frameHeight: number; 
 
-    constructor(public _x: number, public _y: number) {
-        this._x = _x;
-        this._y = _y;
-    };
+    constructor(public position: Vector) {
+    }
 
     sprite: HTMLImageElement;
 
@@ -63,9 +61,9 @@ class GameItem {
 
     addGravity(): void {
 
-        this._y += downForce;
-        if (this._y >= 415)
-            this._y = 415;
+        this.position.y += downForce;
+        if (this.position.y >= 415)
+            this.position.y = 415;
     }
 
     drawSprite(): void {
@@ -73,7 +71,7 @@ class GameItem {
         this.frameHeight = this.sprite.height;
         this.frameWidth = this.sprite.width;
 
-        ctx.drawImage(this.sprite, this._x, this._y);
+        ctx.drawImage(this.sprite, this.position.x, this.position.y);
         
         //loop die checkt of de repeatHeight of repeatWidth true of false is
         // loop die de width of height vult
@@ -103,10 +101,9 @@ class Character {
     frameIndex: number;
     jump: boolean;
 
-    constructor(public _x: number, public _y: number, public numberOfFrames : number) {
-        this._x = _x;
-        this._y = _y;
-    };
+    constructor(public position: Vector, public numberOfFrames : number) {
+        
+    }
 
     sprite: HTMLImageElement;
 
@@ -118,9 +115,9 @@ class Character {
 
     addGravity(): void {
 
-        this._y += downForce;
-        if (this._y >= 415)
-            this._y = 415;
+        this.position.y += downForce;
+        if (this.position.y >= 415)
+            this.position.y = 415;
     }
 
     drawSprite(): void {
@@ -142,19 +139,77 @@ class Character {
         ctx.drawImage(this.sprite,
             this.frameIndex * this.frameWidth, 0,   // Start of slice
             this.frameWidth, this.frameHeight, // Size of slice
-            this._x, this._y, 15, 20);
+            this.position.x, this.position.y, 15, 20);
     }
 }
 
-var mario = new Character(40, 50, 4);
+var mario = new Character(new Vector(40,50), 4);
 
-var pipe = new GameItem(50, 415)
+var pipe = new GameItem(new Vector(50, 415))
 pipe.setSpriteUrl("graphics/assorted/Pipe-head.gif");
 
 
 // setup screen elements here
 mario.setSpriteUrl("graphics/mario/small/Standing-mario.gif");
 mario.numberOfFrames = 1;
+
+
+enum COLLIDER {
+    RECTANGLE,
+    CIRCLE,
+    POLYGON,
+    COMPOUND
+}
+
+interface iCollider {
+    colliderType: COLLIDER;
+    position: Vector;
+}
+
+class RectangleCollider implements iCollider {
+    public dimension
+    public colliderType: COLLIDER = COLLIDER.RECTANGLE;
+
+    private coord: Array<Vector>;
+    constructor(public position: Vector, private witdh: number, private height: number){
+        this.coord.push(position);
+
+        let x2 = position.x + witdh;
+        let y2 = position.y;
+
+        this.coord.push(new Vector(x2, y2));
+
+        let x3 = position.x + witdh;
+        let y3 = position.y - height;
+
+        this.coord.push(new Vector(x3, y3));
+
+        let x4 = position.x;
+        let y4 = position.y -  height;
+
+        this.coord.push(new Vector(x4, y4));
+    }
+    public hit(obj: iCollider) : boolean {
+        if (obj.colliderType == COLLIDER.RECTANGLE ){
+            return Collision.RectangleCollision(this, <RectangleCollider>obj)
+        }
+        return false; 
+    }
+    public ColliderType: COLLIDER = COLLIDER.RECTANGLE;
+}
+
+class Collision {
+    public static RectangleCollision(a: RectangleCollider, b: RectangleCollider): any {
+        var xoverlap: boolean = false;
+        var yoverlap: boolean = false;
+        if(a.position.x <= b.position.x){
+            if (a.position.x + a.dimension.x >= b.position){
+                xoverlap = true;
+            }
+        }
+    }
+}
+
 
 function gameLoop() {
 
@@ -167,14 +222,6 @@ function gameLoop() {
     mario.drawSprite();
     pipe.drawSprite();
     mario.addGravity();
-
-    if (mario._x < pipe._x + pipe.frameWidth &&
-        mario._x + mario.frameWidth > pipe._x &&
-        mario._y < pipe._y + pipe.frameHeight &&
-        mario.frameHeight + mario._y > pipe._y) {
-        console.log('collision detected');
-    }
-
 }
 
 function keyboardInput(event: KeyboardEvent) {
@@ -183,24 +230,24 @@ function keyboardInput(event: KeyboardEvent) {
         case 65: case 37: //a
             mario.setSpriteUrl("graphics/mario/small/Running-mario-left.gif");
             mario.numberOfFrames = 4;
-            mario._x -= 10;
+            mario.position.x -= 10;
             break;
 
         case 38: case 87: //w
             mario.numberOfFrames = 1;
             mario.setSpriteUrl("graphics/mario/small/Jumping-mario.gif");
-            if(mario._y < 415) {
+            if(mario.position.y < 415) {
                 return false;
             }
-            mario._y -= 30;
+            mario.position.y -= 30;
             break;
         case 39: case 68: //d
             mario.setSpriteUrl("graphics/mario/small/Running-mario.gif");
             mario.numberOfFrames = 4;
-            mario._x += 10;
+            mario.position.x += 10;
             break;
         case 40: case 83: //s
-            mario._y += 20;
+            mario.position.y += 20;
             break;
         case 32: //space
             break;
