@@ -32,8 +32,6 @@ class CameraView {
         this.xView = 0;
         this.yView = 0;
     }
-
-
 }
 
 class GameItem {
@@ -67,6 +65,10 @@ class GameItem {
         ctx.drawImage(this.sprite, this.position.x, this.position.y);
     }
 
+        collide(): any {
+            return this.position;
+    }
+
 }
 
 
@@ -79,9 +81,7 @@ class Character {
     frameIndex: number;
     jump: boolean;
 
-    constructor(public position: Vector, public numberOfFrames : number) {
-        
-    }
+    constructor(public position: Vector, public numberOfFrames : number) {}
 
     sprite: HTMLImageElement;
 
@@ -114,11 +114,18 @@ class Character {
         this.frameHeight = this.sprite.height;
         this.frameWidth = this.sprite.width / this.numberOfFrames;
 
+        this.position.setWidth(this.frameWidth);
+        this.position.getHeight(this.frameHeight);
         ctx.drawImage(this.sprite,
             this.frameIndex * this.frameWidth, 0,   // Start of slice
             this.frameWidth, this.frameHeight, // Size of slice
             this.position.x, this.position.y, 15, 20);
     }
+
+    collide(): any {
+        this.position
+    }
+
 }
 
 var mario = new Character(new Vector(40,50), 4);
@@ -129,7 +136,6 @@ pipe.setSpriteUrl("graphics/assorted/Pipe-head.gif");
 mario.setSpriteUrl("graphics/mario/small/Standing-mario.gif");
 mario.numberOfFrames = 1;
 
-
 enum COLLIDER {
     RECTANGLE,
     CIRCLE,
@@ -137,34 +143,42 @@ enum COLLIDER {
     COMPOUND
 }
 
+enum TYPES {
+    CHARACTER,
+    GAMEITEM,
+}
+
 interface iCollider {
     colliderType: COLLIDER;
     position: Vector;
+    // type: TYPES;
 }
 
 class RectangleCollider implements iCollider {
-    public dimension
+    public dimension: Vector = new Vector(1, 1);
     public colliderType: COLLIDER = COLLIDER.RECTANGLE;
+    
 
-    private coord: Array<Vector>;
-    constructor(public position: Vector, private witdh: number, private height: number){
-        this.coord.push(position);
+    constructor(public position: Vector){}
+    // private coord: Array<Vector>;
+    // constructor(public position: Vector, private witdh: number, private height: number){
+    //     this.coord.push(position);
 
-        let x2 = position.x + witdh;
-        let y2 = position.y;
+    //     let x2 = position.x + witdh;
+    //     let y2 = position.y;
 
-        this.coord.push(new Vector(x2, y2));
+    //     this.coord.push(new Vector(x2, y2));
 
-        let x3 = position.x + witdh;
-        let y3 = position.y - height;
+    //     let x3 = position.x + witdh;
+    //     let y3 = position.y - height;
 
-        this.coord.push(new Vector(x3, y3));
+    //     this.coord.push(new Vector(x3, y3));
 
-        let x4 = position.x;
-        let y4 = position.y -  height;
+    //     let x4 = position.x;
+    //     let y4 = position.y -  height;
 
-        this.coord.push(new Vector(x4, y4));
-    }
+    //     this.coord.push(new Vector(x4, y4));
+    // }
     public hit(obj: iCollider) : boolean {
         if (obj.colliderType == COLLIDER.RECTANGLE ){
             return Collision.RectangleCollision(this, <RectangleCollider>obj)
@@ -175,17 +189,43 @@ class RectangleCollider implements iCollider {
 }
 
 class Collision {
-    public static RectangleCollision(a: RectangleCollider, b: RectangleCollider): any {
+
+    public static RectangleCollision(a: RectangleCollider, b: RectangleCollider): boolean {
+        
         var xoverlap: boolean = false;
         var yoverlap: boolean = false;
-        if(a.position.x <= b.position.x){
-            if (a.position.x + a.dimension.x >= b.position){
+        console.log(a)
+        if (a.position.x <= b.position.x) {
+            if (a.position.x + a.dimension.xDimension() >= b.position.x) {
                 xoverlap = true;
             }
         }
-    }
-}
+        else {
+            if (b.position.x + b.dimension.xDimension() >= a.position.x) {
+                xoverlap = true;
+            }
+        }
 
+        if (a.position.y <= b.position.y) {
+            if (a.position.y + a.dimension.yDimension() >= b.position.y) {
+                yoverlap = true;
+            }
+        }
+        else {
+            if (b.position.y + b.dimension.yDimension() >= a.position.y) {
+                yoverlap = true;
+            }
+        }
+
+        if (xoverlap == true && yoverlap == true) {
+            console.log('col');
+            return true;
+        }
+
+        return false;
+    }
+
+}
 
 function gameLoop() {
 
@@ -198,6 +238,13 @@ function gameLoop() {
     mario.drawSprite();
     pipe.drawSprite();
     mario.addGravity();
+    mario.collide();
+    pipe.collide();
+
+    if (Collision.RectangleCollision(mario.collide(), pipe.collide())) {
+        console.log('rekt');
+    }
+
 }
 
 function keyboardInput(event: KeyboardEvent) {

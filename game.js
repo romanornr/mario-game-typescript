@@ -1,8 +1,30 @@
 var Vector = (function () {
     function Vector(x, y) {
+        var _this = this;
         this.x = x;
         this.y = y;
+        this.magnitude = function () {
+            return Math.sqrt(_this.xDimension() * _this.xDimension() + _this.yDimension() * _this.yDimension());
+        };
+        this.normalize = function () {
+            var len = Math.sqrt(_this.xDimension() * _this.xDimension() + _this.yDimension() * _this.yDimension());
+            _this.x = (_this.x + _this.frameWidth) / len;
+            _this.y = (_this.x + _this.frameHeight) / len;
+            return;
+        };
     }
+    Vector.prototype.setWidth = function (frameWidth) {
+        this.frameWidth = frameWidth;
+    };
+    Vector.prototype.getHeight = function (frameHeigth) {
+        this.frameHeight = frameHeigth;
+    };
+    Vector.prototype.xDimension = function () {
+        return this.x + this.frameWidth;
+    };
+    Vector.prototype.yDimension = function () {
+        return this.y + this.frameHeight;
+    };
     return Vector;
 }());
 var w = 720, h = 480;
@@ -52,6 +74,9 @@ var GameItem = (function () {
         this.frameWidth = this.sprite.width;
         ctx.drawImage(this.sprite, this.position.x, this.position.y);
     };
+    GameItem.prototype.collide = function () {
+        return this.position;
+    };
     return GameItem;
 }());
 var Character = (function () {
@@ -82,7 +107,12 @@ var Character = (function () {
         }
         this.frameHeight = this.sprite.height;
         this.frameWidth = this.sprite.width / this.numberOfFrames;
+        this.position.setWidth(this.frameWidth);
+        this.position.getHeight(this.frameHeight);
         ctx.drawImage(this.sprite, this.frameIndex * this.frameWidth, 0, this.frameWidth, this.frameHeight, this.position.x, this.position.y, 15, 20);
+    };
+    Character.prototype.collide = function () {
+        this.position;
     };
     return Character;
 }());
@@ -98,23 +128,17 @@ var COLLIDER;
     COLLIDER[COLLIDER["POLYGON"] = 2] = "POLYGON";
     COLLIDER[COLLIDER["COMPOUND"] = 3] = "COMPOUND";
 })(COLLIDER || (COLLIDER = {}));
+var TYPES;
+(function (TYPES) {
+    TYPES[TYPES["CHARACTER"] = 0] = "CHARACTER";
+    TYPES[TYPES["GAMEITEM"] = 1] = "GAMEITEM";
+})(TYPES || (TYPES = {}));
 var RectangleCollider = (function () {
-    function RectangleCollider(position, witdh, height) {
+    function RectangleCollider(position) {
         this.position = position;
-        this.witdh = witdh;
-        this.height = height;
+        this.dimension = new Vector(1, 1);
         this.colliderType = COLLIDER.RECTANGLE;
         this.ColliderType = COLLIDER.RECTANGLE;
-        this.coord.push(position);
-        var x2 = position.x + witdh;
-        var y2 = position.y;
-        this.coord.push(new Vector(x2, y2));
-        var x3 = position.x + witdh;
-        var y3 = position.y - height;
-        this.coord.push(new Vector(x3, y3));
-        var x4 = position.x;
-        var y4 = position.y - height;
-        this.coord.push(new Vector(x4, y4));
     }
     RectangleCollider.prototype.hit = function (obj) {
         if (obj.colliderType == COLLIDER.RECTANGLE) {
@@ -130,11 +154,32 @@ var Collision = (function () {
     Collision.RectangleCollision = function (a, b) {
         var xoverlap = false;
         var yoverlap = false;
+        console.log(a);
         if (a.position.x <= b.position.x) {
-            if (a.position.x + a.dimension.x >= b.position) {
+            if (a.position.x + a.dimension.xDimension() >= b.position.x) {
                 xoverlap = true;
             }
         }
+        else {
+            if (b.position.x + b.dimension.xDimension() >= a.position.x) {
+                xoverlap = true;
+            }
+        }
+        if (a.position.y <= b.position.y) {
+            if (a.position.y + a.dimension.yDimension() >= b.position.y) {
+                yoverlap = true;
+            }
+        }
+        else {
+            if (b.position.y + b.dimension.yDimension() >= a.position.y) {
+                yoverlap = true;
+            }
+        }
+        if (xoverlap == true && yoverlap == true) {
+            console.log('col');
+            return true;
+        }
+        return false;
     };
     return Collision;
 }());
@@ -148,6 +193,11 @@ function gameLoop() {
     mario.drawSprite();
     pipe.drawSprite();
     mario.addGravity();
+    mario.collide();
+    pipe.collide();
+    if (Collision.RectangleCollision(mario.collide(), pipe.collide())) {
+        console.log('rekt');
+    }
 }
 function keyboardInput(event) {
     switch (event.keyCode) {
