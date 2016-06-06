@@ -17,115 +17,6 @@ var Camera = (function () {
     };
     return Camera;
 }());
-var GameItem = (function () {
-    function GameItem(position) {
-        this.position = position;
-    }
-    GameItem.prototype.setSpriteUrl = function (input) {
-        this.sprite = new Image();
-        this.sprite.src = input;
-    };
-    GameItem.prototype.addGravity = function () {
-        this.position.y += downForce;
-        if (this.position.y >= 415)
-            this.position.y = 415;
-    };
-    GameItem.prototype.drawSprite = function () {
-        this.frameHeight = this.sprite.height;
-        this.frameWidth = this.sprite.width;
-        ctx.drawImage(this.sprite, this.position.x, this.position.y);
-    };
-    GameItem.prototype.collide = function () {
-        return new RectangleCollider(this.position);
-    };
-    return GameItem;
-}());
-var Vector = (function () {
-    function Vector(x, y) {
-        var _this = this;
-        this.x = x;
-        this.y = y;
-        this.magnitude = function () {
-            return Math.sqrt(_this.xDimension() * _this.xDimension() + _this.yDimension() * _this.yDimension());
-        };
-        this.normalize = function () {
-            var len = Math.sqrt(_this.xDimension() * _this.xDimension() + _this.yDimension() * _this.yDimension());
-            _this.x = (_this.x + _this.frameWidth) / len;
-            _this.y = (_this.x + _this.frameHeight) / len;
-            return;
-        };
-    }
-    Vector.prototype.setWidth = function (frameWidth) {
-        this.frameWidth = frameWidth;
-    };
-    Vector.prototype.getHeight = function (frameHeigth) {
-        this.frameHeight = frameHeigth;
-    };
-    Vector.prototype.xDimension = function () {
-        return this.x + this.frameWidth;
-    };
-    Vector.prototype.yDimension = function () {
-        return this.y + this.frameHeight;
-    };
-    return Vector;
-}());
-var canvas;
-var ctx;
-var downForce = 2;
-var gravitySpeed = 1.3;
-var view = new Camera();
-var canvas = document.createElement('canvas');
-view.x = 0;
-view.y = 0;
-view.width = canvas.width = 720;
-view.height = canvas.height = 480;
-var Game = (function () {
-    function Game() {
-        this.controls = {
-            left: false,
-            up: false,
-            right: false,
-            down: false,
-        };
-    }
-    Game.prototype.setScreen = function () {
-        this.screenwith = 720;
-        this.sceenheight = 480;
-    };
-    return Game;
-}());
-var Character = (function (_super) {
-    __extends(Character, _super);
-    function Character(position, numberOfFrames) {
-        _super.call(this, position);
-        this.numberOfFrames = numberOfFrames;
-        this.ticksPerFrame = 1;
-    }
-    ;
-    Character.prototype.drawSprite = function () {
-        this.tickCount = this.ticksPerFrame;
-        if (this.tickCount >= this.ticksPerFrame) {
-            this.tickCount = 0;
-            if (this.frameIndex < this.numberOfFrames - 1) {
-                this.frameIndex += 1;
-            }
-            else {
-                this.frameIndex = 0;
-            }
-        }
-        this.frameHeight = this.sprite.height;
-        this.frameWidth = this.sprite.width / this.numberOfFrames;
-        this.position.setWidth(this.frameWidth);
-        this.position.getHeight(this.frameHeight);
-        ctx.drawImage(this.sprite, this.frameIndex * this.frameWidth, 0, this.frameWidth, this.frameHeight, this.position.x, this.position.y, 15, 20);
-    };
-    return Character;
-}(GameItem));
-var mario = new Character(new Vector(40, 50), 4);
-var pipe = new GameItem(new Vector(50, 415));
-pipe.setSpriteUrl("graphics/assorted/Pipe-head.gif");
-mario.setSpriteUrl("graphics/mario/small/Standing-mario.gif");
-mario.numberOfFrames = 1;
 var COLLIDER;
 (function (COLLIDER) {
     COLLIDER[COLLIDER["RECTANGLE"] = 0] = "RECTANGLE";
@@ -187,6 +78,115 @@ var Collision = (function () {
     };
     return Collision;
 }());
+var GameItem = (function () {
+    function GameItem(position) {
+        this.position = position;
+    }
+    GameItem.prototype.setSpriteUrl = function (input) {
+        this.sprite = new Image();
+        this.sprite.src = input;
+    };
+    GameItem.prototype.addGravity = function () {
+        this.position.y += downForce;
+        if (this.position.y >= 415)
+            this.position.y = 415;
+    };
+    GameItem.prototype.drawSprite = function () {
+        this.frameHeight = this.sprite.height;
+        this.frameWidth = this.sprite.width;
+        ctx.drawImage(this.sprite, this.position.x, this.position.y);
+    };
+    GameItem.prototype.collide = function () {
+        return new RectangleCollider(this.position);
+    };
+    return GameItem;
+}());
+var Character = (function (_super) {
+    __extends(Character, _super);
+    function Character(position, numberOfFrames) {
+        _super.call(this, position);
+        this.numberOfFrames = numberOfFrames;
+        this.ticksPerFrame = 1;
+    }
+    ;
+    Character.prototype.drawSprite = function () {
+        this.tickCount = this.ticksPerFrame;
+        if (this.tickCount >= this.ticksPerFrame) {
+            this.tickCount = 0;
+            if (this.frameIndex < this.numberOfFrames - 1) {
+                this.frameIndex += 1;
+            }
+            else {
+                this.frameIndex = 0;
+            }
+        }
+        this.frameHeight = this.sprite.height;
+        this.frameWidth = this.sprite.width / this.numberOfFrames;
+        this.position.setWidth(this.frameWidth);
+        this.position.getHeight(this.frameHeight);
+        ctx.drawImage(this.sprite, this.frameIndex * this.frameWidth, 0, this.frameWidth, this.frameHeight, this.position.x, this.position.y, 15, 20);
+    };
+    return Character;
+}(GameItem));
+var Vector = (function () {
+    function Vector(x, y) {
+        var _this = this;
+        this.x = x;
+        this.y = y;
+        this.magnitude = function () {
+            return Math.sqrt(_this.xDimension() * _this.xDimension() + _this.yDimension() * _this.yDimension());
+        };
+        this.normalize = function () {
+            var len = Math.sqrt(_this.xDimension() * _this.xDimension() + _this.yDimension() * _this.yDimension());
+            _this.x = (_this.x + _this.frameWidth) / len;
+            _this.y = (_this.x + _this.frameHeight) / len;
+            return;
+        };
+    }
+    Vector.prototype.setWidth = function (frameWidth) {
+        this.frameWidth = frameWidth;
+    };
+    Vector.prototype.getHeight = function (frameHeigth) {
+        this.frameHeight = frameHeigth;
+    };
+    Vector.prototype.xDimension = function () {
+        return this.x + this.frameWidth;
+    };
+    Vector.prototype.yDimension = function () {
+        return this.y + this.frameHeight;
+    };
+    return Vector;
+}());
+var canvas;
+var ctx;
+var downForce = 2;
+var gravitySpeed = 1.3;
+var view = new Camera();
+var canvas = document.createElement('canvas');
+view.x = 0;
+view.y = 0;
+view.width = canvas.width = 720;
+view.height = canvas.height = 480;
+var Game = (function () {
+    function Game() {
+        this.controls = {
+            left: false,
+            up: false,
+            right: false,
+            down: false,
+        };
+    }
+    Game.prototype.setScreen = function () {
+        this.screenwith = 720;
+        this.sceenheight = 480;
+    };
+    return Game;
+}());
+var mario = new Character(new Vector(40, 50), 4);
+var pipe = new GameItem(new Vector(50, 415));
+pipe.setSpriteUrl("graphics/assorted/Pipe-head.gif");
+mario.setSpriteUrl("graphics/mario/small/Standing-mario.gif");
+mario.numberOfFrames = 1;
 function gameLoop() {
     ctx.clearRect(0, 0, view.width, view.height);
     ctx.fillStyle = "rgb(174,238,238)";
@@ -200,7 +200,7 @@ function gameLoop() {
     pipe.collide();
     requestAnimationFrame(gameLoop);
     if (Collision.RectangleCollision(mario.collide(), pipe.collide())) {
-        console.log('rekt');
+        console.log('rekt!');
     }
 }
 function keyboardInput(event) {
