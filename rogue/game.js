@@ -17,6 +17,33 @@ var Camera = (function () {
     };
     return Camera;
 }());
+var Character = (function (_super) {
+    __extends(Character, _super);
+    function Character(position, numberOfFrames) {
+        _super.call(this, position);
+        this.numberOfFrames = numberOfFrames;
+        this.ticksPerFrame = 1;
+    }
+    ;
+    Character.prototype.drawSprite = function () {
+        this.tickCount = this.ticksPerFrame;
+        if (this.tickCount >= this.ticksPerFrame) {
+            this.tickCount = 0;
+            if (this.frameIndex < this.numberOfFrames - 1) {
+                this.frameIndex += 1;
+            }
+            else {
+                this.frameIndex = 0;
+            }
+        }
+        this.frameHeight = this.sprite.height;
+        this.frameWidth = this.sprite.width / this.numberOfFrames;
+        this.position.setWidth(this.frameWidth);
+        this.position.getHeight(this.frameHeight);
+        ctx.drawImage(this.sprite, this.frameIndex * this.frameWidth, 0, this.frameWidth, this.frameHeight, this.position.x, this.position.y, 15, 20);
+    };
+    return Character;
+}(GameItem));
 var GameItem = (function () {
     function GameItem(position) {
         this.position = position;
@@ -94,33 +121,6 @@ var Game = (function () {
     };
     return Game;
 }());
-var Character = (function (_super) {
-    __extends(Character, _super);
-    function Character(position, numberOfFrames) {
-        _super.call(this, position);
-        this.numberOfFrames = numberOfFrames;
-        this.ticksPerFrame = 1;
-    }
-    ;
-    Character.prototype.drawSprite = function () {
-        this.tickCount = this.ticksPerFrame;
-        if (this.tickCount >= this.ticksPerFrame) {
-            this.tickCount = 0;
-            if (this.frameIndex < this.numberOfFrames - 1) {
-                this.frameIndex += 1;
-            }
-            else {
-                this.frameIndex = 0;
-            }
-        }
-        this.frameHeight = this.sprite.height;
-        this.frameWidth = this.sprite.width / this.numberOfFrames;
-        this.position.setWidth(this.frameWidth);
-        this.position.getHeight(this.frameHeight);
-        ctx.drawImage(this.sprite, this.frameIndex * this.frameWidth, 0, this.frameWidth, this.frameHeight, this.position.x, this.position.y, 15, 20);
-    };
-    return Character;
-}(GameItem));
 var mario = new Character(new Vector(40, 50), 4);
 var pipe = new GameItem(new Vector(50, 415));
 pipe.setSpriteUrl("graphics/assorted/Pipe-head.gif");

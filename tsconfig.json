@@ -4,5 +4,10 @@
 		"removeComments": true,
         "target": "es5",
         "out": "game.js"
-    }
+    },
+
+    "exclude": [
+        "node_modules",
+        "js"
+    ]
 }

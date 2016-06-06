@@ -27,113 +27,6 @@ class Game {
     }
 }
 
-class CameraView {
-
-    xView: number;
-    yView: number;
-
-    setCamera() {
-        this.xView = 0;
-        this.yView = 0;
-    }
-}
-
-class GameItem {
-
-    frameWidth: number;
-    frameHeight: number;
-    COLLIDER: RectangleCollider;
-
-    constructor(public position: Vector) {
-    }
-
-    sprite: HTMLImageElement;
-
-
-    setSpriteUrl(input: string): void {
-        this.sprite = new Image();
-        this.sprite.src = input;
-    }
-
-    addGravity(): void {
-
-        this.position.y += downForce;
-        if (this.position.y >= 415)
-            this.position.y = 415;
-    }
-
-    drawSprite(): void {
-
-        this.frameHeight = this.sprite.height;
-        this.frameWidth = this.sprite.width;
-
-        ctx.drawImage(this.sprite, this.position.x, this.position.y);
-    }
-
-    collide(): RectangleCollider {
-       return this.COLLIDER;
-    }
-
-}
-
-
-class Character {
-
-    frameWidth: number;
-    frameHeight: number; 
-    tickCount: number;
-    ticksPerFrame: number = 1;
-    frameIndex: number;
-    jump: boolean;
-    COLLIDER: RectangleCollider;
-
-    constructor(public position: Vector, public numberOfFrames : number) {}
-
-    sprite: HTMLImageElement;
-
-
-    setSpriteUrl(input: string) : void {
-        this.sprite = new Image();
-        this.sprite.src = input;
-    }
-
-    addGravity(): void {
-
-        this.position.y += downForce;
-        if (this.position.y >= 415)
-            this.position.y = 415;
-    }
-
-    drawSprite(): void {
-
-        this.tickCount = this.ticksPerFrame;
-
-        if (this.tickCount >= this.ticksPerFrame) {
-            this.tickCount = 0;
-            if (this.frameIndex < this.numberOfFrames - 1) {
-                this.frameIndex += 1;
-            } else {
-                this.frameIndex = 0;
-            }
-        }
-
-        this.frameHeight = this.sprite.height;
-        this.frameWidth = this.sprite.width / this.numberOfFrames;
-
-        this.position.setWidth(this.frameWidth);
-        this.position.getHeight(this.frameHeight);
-        ctx.drawImage(this.sprite,
-            this.frameIndex * this.frameWidth, 0,   // Start of slice
-            this.frameWidth, this.frameHeight, // Size of slice
-            this.position.x, this.position.y, 15, 20);
-    }
-
-    collide(): RectangleCollider {
-        return this.COLLIDER
-    }
-
-}
-
 var mario = new Character(new Vector(40,50), 4);
 
 var pipe = new GameItem(new Vector(50, 415))
@@ -157,34 +50,13 @@ enum TYPES {
 interface iCollider {
     colliderType: COLLIDER;
     position: Vector;
-    // type: TYPES;
 }
 
 class RectangleCollider implements iCollider {
-    public dimension: Vector = new Vector(1, 1);
     public colliderType: COLLIDER = COLLIDER.RECTANGLE;
     
-
     constructor(public position: Vector){}
-    // private coord: Array<Vector>;
-    // constructor(public position: Vector, private witdh: number, private height: number){
-    //     this.coord.push(position);
 
-    //     let x2 = position.x + witdh;
-    //     let y2 = position.y;
-
-    //     this.coord.push(new Vector(x2, y2));
-
-    //     let x3 = position.x + witdh;
-    //     let y3 = position.y - height;
-
-    //     this.coord.push(new Vector(x3, y3));
-
-    //     let x4 = position.x;
-    //     let y4 = position.y -  height;
-
-    //     this.coord.push(new Vector(x4, y4));
-    // }
     public hit(obj: iCollider) : boolean {
         if (obj.colliderType == COLLIDER.RECTANGLE ){
             return Collision.RectangleCollision(this, <RectangleCollider>obj)
@@ -200,25 +72,25 @@ class Collision {
         
         var xoverlap: boolean = false;
         var yoverlap: boolean = false;
-        console.log(a)
+        console.log(a.position.x)
         if (a.position.x <= b.position.x) {
-            if (a.position.x + a.dimension.xDimension() >= b.position.x) {
+            if (a.position.x + a.position.xDimension() >= b.position.x) {
                 xoverlap = true;
             }
         }
         else {
-            if (b.position.x + b.dimension.xDimension() >= a.position.x) {
+            if (b.position.x + b.position.xDimension() >= a.position.x) {
                 xoverlap = true;
             }
         }
 
         if (a.position.y <= b.position.y) {
-            if (a.position.y + a.dimension.yDimension() >= b.position.y) {
+            if (a.position.y + a.position.yDimension() >= b.position.y) {
                 yoverlap = true;
             }
         }
         else {
-            if (b.position.y + b.dimension.yDimension() >= a.position.y) {
+            if (b.position.y + b.position.yDimension() >= a.position.y) {
                 yoverlap = true;
             }
         }
@@ -235,7 +107,6 @@ class Collision {
 
 function gameLoop() {
 
-    requestAnimationFrame(gameLoop);
     ctx.clearRect(0, 0, view.width, view.height);
     ctx.fillStyle = "rgb(174,238,238)";
     ctx.fillRect(0, 0, view.width, view.height);
@@ -246,7 +117,7 @@ function gameLoop() {
     mario.addGravity();
     mario.collide();
     pipe.collide();
- 
+    requestAnimationFrame(gameLoop);
     if (Collision.RectangleCollision(mario.collide(), pipe.collide()) )
     {
         console.log('rekt');
