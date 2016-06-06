@@ -1,9 +1,13 @@
-var w = 720, h = 480;
-
 var canvas: HTMLCanvasElement;
 var ctx: CanvasRenderingContext2D; 
 var downForce = 2;
 var gravitySpeed = 1.3;
+var view = new Camera();
+var canvas = <HTMLCanvasElement>document.createElement('canvas');
+view.x = 0;
+view.y = 0;
+view.width = canvas.width = 720;
+view.height = canvas.height = 480;
 
 class Game {
 
@@ -37,7 +41,8 @@ class CameraView {
 class GameItem {
 
     frameWidth: number;
-    frameHeight: number; 
+    frameHeight: number;
+    COLLIDER: RectangleCollider;
 
     constructor(public position: Vector) {
     }
@@ -65,8 +70,8 @@ class GameItem {
         ctx.drawImage(this.sprite, this.position.x, this.position.y);
     }
 
-        collide(): any {
-            return this.position;
+    collide(): RectangleCollider {
+       return this.COLLIDER;
     }
 
 }
@@ -80,6 +85,7 @@ class Character {
     ticksPerFrame: number = 1;
     frameIndex: number;
     jump: boolean;
+    COLLIDER: RectangleCollider;
 
     constructor(public position: Vector, public numberOfFrames : number) {}
 
@@ -122,8 +128,8 @@ class Character {
             this.position.x, this.position.y, 15, 20);
     }
 
-    collide(): any {
-        this.position
+    collide(): RectangleCollider {
+        return this.COLLIDER
     }
 
 }
@@ -230,18 +236,19 @@ class Collision {
 function gameLoop() {
 
     requestAnimationFrame(gameLoop);
-    ctx.clearRect(0, 0, w, h);
+    ctx.clearRect(0, 0, view.width, view.height);
     ctx.fillStyle = "rgb(174,238,238)";
-    ctx.fillRect(0, 0, w, h);
+    ctx.fillRect(0, 0, view.width, view.height);
     ctx.fillStyle = "rgb(14,253,1)";
-    var floor = ctx.fillRect(0, h - 45, w, 45);
+    var floor = ctx.fillRect(0, view.height - 45, view.width, 45);
     mario.drawSprite();
     pipe.drawSprite();
     mario.addGravity();
     mario.collide();
     pipe.collide();
-
-    if (Collision.RectangleCollision(mario.collide(), pipe.collide())) {
+ 
+    if (Collision.RectangleCollision(mario.collide(), pipe.collide()) )
+    {
         console.log('rekt');
     }
 
@@ -299,11 +306,12 @@ function keyboardInput_release(event: KeyboardEvent){
 }
 
 window.onload = () => {
-    canvas = <HTMLCanvasElement>document.getElementById('canvas');
+    
+    document.body.appendChild(canvas);
+    ctx = canvas.getContext("2d");
 
     document.addEventListener('keydown', keyboardInput);
     document.addEventListener('keyup', keyboardInput_release)
 
-    ctx = canvas.getContext("2d");
     gameLoop();
 }

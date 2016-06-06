@@ -1,3 +1,17 @@
+var Camera = (function () {
+    function Camera() {
+    }
+    Camera.prototype.View = function () {
+        this.x = 0;
+        this.y = 0;
+        this.width = canvas.width;
+        this.height = canvas.height;
+    };
+    Camera.prototype.moveCam = function (canvas) {
+        canvas.style.left += 12;
+    };
+    return Camera;
+}());
 var Vector = (function () {
     function Vector(x, y) {
         var _this = this;
@@ -27,11 +41,16 @@ var Vector = (function () {
     };
     return Vector;
 }());
-var w = 720, h = 480;
 var canvas;
 var ctx;
 var downForce = 2;
 var gravitySpeed = 1.3;
+var view = new Camera();
+var canvas = document.createElement('canvas');
+view.x = 0;
+view.y = 0;
+view.width = canvas.width = 720;
+view.height = canvas.height = 480;
 var Game = (function () {
     function Game() {
         this.controls = {
@@ -75,7 +94,7 @@ var GameItem = (function () {
         ctx.drawImage(this.sprite, this.position.x, this.position.y);
     };
     GameItem.prototype.collide = function () {
-        return this.position;
+        return this.COLLIDER;
     };
     return GameItem;
 }());
@@ -112,7 +131,7 @@ var Character = (function () {
         ctx.drawImage(this.sprite, this.frameIndex * this.frameWidth, 0, this.frameWidth, this.frameHeight, this.position.x, this.position.y, 15, 20);
     };
     Character.prototype.collide = function () {
-        this.position;
+        return this.COLLIDER;
     };
     return Character;
 }());
@@ -185,11 +204,11 @@ var Collision = (function () {
 }());
 function gameLoop() {
     requestAnimationFrame(gameLoop);
-    ctx.clearRect(0, 0, w, h);
+    ctx.clearRect(0, 0, view.width, view.height);
     ctx.fillStyle = "rgb(174,238,238)";
-    ctx.fillRect(0, 0, w, h);
+    ctx.fillRect(0, 0, view.width, view.height);
     ctx.fillStyle = "rgb(14,253,1)";
-    var floor = ctx.fillRect(0, h - 45, w, 45);
+    var floor = ctx.fillRect(0, view.height - 45, view.width, 45);
     mario.drawSprite();
     pipe.drawSprite();
     mario.addGravity();
@@ -254,10 +273,10 @@ function keyboardInput_release(event) {
     }
 }
 window.onload = function () {
-    canvas = document.getElementById('canvas');
+    document.body.appendChild(canvas);
+    ctx = canvas.getContext("2d");
     document.addEventListener('keydown', keyboardInput);
     document.addEventListener('keyup', keyboardInput_release);
-    ctx = canvas.getContext("2d");
     gameLoop();
 };
 //# sourceMappingURL=game.js.map
